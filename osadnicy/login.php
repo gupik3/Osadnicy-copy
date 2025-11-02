@@ -18,8 +18,14 @@ $user = $_POST['username'];
 $pass = $_POST['password'];
 
 // Zapytanie SQL (bez zabezpieczeń, aby pokazać SQL Injection)
-$sql = "SELECT * FROM users WHERE username = '$user' AND password = '$pass'";
-$result = $conn->query($sql);
+//$sql = "SELECT * FROM users WHERE username = '$user' AND password = '$pass'";
+//$result = $conn->query($sql);
+
+//Poprawione zapytanie eliminujące SQL Injection po przez użycie "prepared statements"
+$stmt = $conn->prepare("SELECT * FROM users WHERE username = ? AND password = ?");
+$stmt->bind_param("ss", $user, $pass);
+$stmt->execute();
+$result = $stmt->get_result();
 
 // Sprawdzenie czy użytkownik istnieje
 if ($result->num_rows > 0) {
